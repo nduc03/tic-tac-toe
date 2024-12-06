@@ -5,7 +5,7 @@
 
 using namespace std;
 
-constexpr int SIZE = 5;
+constexpr int SIZE = 3;
 
 constexpr int COMP_WIN = 1;
 constexpr int COMP_LOSE = -1;
@@ -14,7 +14,7 @@ constexpr int DRAW = 0;
 constexpr int PLAYER_COMP = 1;
 constexpr int PLAYER_HUMAN = -1;
 
-constexpr int MAX_DEPTH = 8;
+constexpr int MAX_DEPTH = 7;
 
 int board[SIZE][SIZE] = {0};
 
@@ -87,26 +87,32 @@ bool is_full() {
     return true;
 }
 
-bool check_useless_tile(int row, int col) { // todo: still incorrect
+bool check_useless_tile(int row, int col /* todo: need to check whose turn */) {
+    // todo: fixed, but needs testing
     bool useless_row = false;
     bool useless_col = false;
     bool useless_diag = false;
     bool useless_anti_diag = false;
+
     int check_row = board[row][0];
     int check_col = board[0][col];
     for (int i = 1; i < SIZE; i++) {
-        if (board[row][i] != 0 && board[row][i] != check_row && i != col) {
-            useless_row = true;
+        if (check_row == 0) {
+            check_row = board[row][i]; // reassign check_row until the first non-zero element in the row
+        } else if (check_row != board[row][i] && i != col) {
+            useless_row = true; // if the row has opponent tile, it cannot be used to win
         }
-        if (board[i][col] != 0 && board[i][col] != check_col && i != row) {
-            useless_col = true;
+        if (check_col == 0) {
+            check_row = board[row][i]; // reassign check_col until the first non-zero element in the column
+        } else if (check_col != board[i][col] && i != row) {
+            useless_col = true; // if the column has opponent tile, it cannot be used to win
         }
     }
     if (row == col) {
         int check_diag = board[0][0];
         for (int i = 1; i < SIZE; i++) {
             if (board[i][i] != 0 && board[i][i] != check_diag && i != row) {
-                useless_diag = true;
+                useless_diag = true; // if the diagonal has opponent tile, it cannot be used to win
             }
         }
     } else useless_diag = true;
@@ -114,18 +120,19 @@ bool check_useless_tile(int row, int col) { // todo: still incorrect
         int check_anti_diag = board[0][SIZE - 1];
         for (int i = 1; i < SIZE; i++) {
             if (board[i][SIZE - 1 - i] != 0 && board[i][SIZE - 1 - i] != check_anti_diag && i != row) {
-                useless_anti_diag = true;
+                useless_anti_diag = true; // if the anti-diagonal has opponent tile, it cannot be used to win
             }
         }
     } else useless_anti_diag = true;
     return useless_col && useless_row && useless_diag && useless_anti_diag;
 }
 
-bool is_unwinnable() {
+bool is_unwinnable(/* todo: need to check whose turn */) {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
             if (board[i][j] == 0) {
-                if(!check_useless_tile(i, j)) return false;;
+                // if every empty tile is useless, the game is unwinnable
+                if(!check_useless_tile(i, j)) return false;
             }
         }
     }
@@ -313,11 +320,11 @@ int main() {
             cout << "Draw\n";
             break;
         }
-        // ! Bug: is_unwinnable() is not working correctly
-        // if (is_unwinnable()) {
-        //     print_board();
-        //     cout << "Draw\n";
-        //     break;
-        // }
+        // ! Bug: is_unwinnable() may not work as intended
+        if (is_unwinnable()) {
+            print_board();
+            cout << "Draw\n";
+            break;
+        }
     }
 }
