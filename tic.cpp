@@ -103,7 +103,7 @@ bool check_useless_tile(int row, int col /* todo: need to check whose turn */) {
             useless_row = true; // if the row has opponent tile, it cannot be used to win
         }
         if (check_col == 0) {
-            check_row = board[row][i]; // reassign check_col until the first non-zero element in the column
+            check_col = board[0][col]; // reassign check_col until the first non-zero element in the column
         } else if (check_col != board[i][col] && i != row) {
             useless_col = true; // if the column has opponent tile, it cannot be used to win
         }
