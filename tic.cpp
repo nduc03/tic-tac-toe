@@ -88,8 +88,7 @@ bool is_full() {
     return true;
 }
 
-bool check_useless_tile(int row, int col /* todo: need to check whose turn */) {
-    // todo: fixed, but needs testing
+bool check_useless_tile(int row, int col) {
     bool useless_row = false;
     bool useless_col = false;
     bool useless_diag = false;
@@ -132,7 +131,7 @@ bool check_useless_tile(int row, int col /* todo: need to check whose turn */) {
     return useless_col && useless_row && useless_diag && useless_anti_diag;
 }
 
-bool is_unwinnable(/* todo: need to check whose turn */) {
+bool is_unwinnable() {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
             if (board[i][j] == 0) {
@@ -190,42 +189,6 @@ int minimax_abPruning(int depth, int player, int alpha, int beta) {
             if (board[i][j] == 0) {
                 board[i][j] = player;
                 int score = minimax_abPruning(depth + 1, -player, alpha, beta);
-                board[i][j] = 0;
-                if (player == PLAYER_COMP) {
-                    best_score = max(score, best_score);
-                    alpha = max( alpha, best_score);
-                } else {
-                    best_score = min(score, best_score);
-                    beta = min( beta, best_score);
-                }
-                if (beta <= alpha) {
-                    break;
-                }
-            }
-        }
-    }
-    return best_score;
-}
-
-// ! does not finish implementation
-int minimax_parallel(int board[][SIZE], int depth, int player, int alpha, int beta) {
-    if (depth > MAX_DEPTH) {
-        return 0;
-    }
-    int result = check_board();
-    if (result != 0) {
-        return result * 10;
-    }
-    if (is_full()) {
-        return DRAW;
-    }
-    int best_score = player == PLAYER_COMP ? INT_MIN : INT_MAX;
-    for (int i = 0; i < SIZE; i++) {
-        // todo: parallelize this loop
-        for (int j = 0; j < SIZE; j++) {
-            if (board[i][j] == 0) {
-                board[i][j] = player;
-                int score = minimax_parallel(board, depth + 1, -player, alpha, beta);
                 board[i][j] = 0;
                 if (player == PLAYER_COMP) {
                     best_score = max(score, best_score);
