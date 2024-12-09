@@ -37,6 +37,7 @@ void print_board() {
 }
 
 int check_board() {
+    int WIN_LOSE_FACTOR = 10;
     int diag_sum = 0;
     int anti_diag_sum = 0;
     for (int i = 0; i < SIZE; i++) {
@@ -50,28 +51,28 @@ int check_board() {
             }
         }
         if (row_sum == -SIZE) {
-            return COMP_LOSE;
+            return COMP_LOSE * WIN_LOSE_FACTOR;
         } else if (row_sum == SIZE) {
-            return COMP_WIN;
+            return COMP_WIN * WIN_LOSE_FACTOR;
         }
         if (col_sum == -SIZE) {
-            return COMP_LOSE;
+            return COMP_LOSE * WIN_LOSE_FACTOR;
         } else if (col_sum == SIZE) {
-            return COMP_WIN;
+            return COMP_WIN * WIN_LOSE_FACTOR;
         }
         diag_sum += board[i][i];
     }
     if (diag_sum == -SIZE) {
-        return COMP_LOSE;
+        return COMP_LOSE * WIN_LOSE_FACTOR;
     }
     if (diag_sum == SIZE) {
-        return COMP_WIN;
+        return COMP_WIN * WIN_LOSE_FACTOR;
     }
     if (anti_diag_sum == -SIZE) {
-        return COMP_LOSE;
+        return COMP_LOSE * WIN_LOSE_FACTOR;
     }
     if (anti_diag_sum == SIZE) {
-        return COMP_WIN;
+        return COMP_WIN * WIN_LOSE_FACTOR;
     }
     return DRAW;
 }
@@ -149,7 +150,7 @@ int minimax(int depth, int player) {
     }
     int result = check_board();
     if (result != 0) {
-        return result * 10;
+        return result;
     }
     if (is_full()) {
         return DRAW;
