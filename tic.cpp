@@ -303,7 +303,7 @@ int main() {
             continue;
         }
         board[row][col] = PLAYER_HUMAN;
-        if (check_board() == COMP_LOSE) {
+        if (check_board() < 0) {
             print_board();
             cout << "You win\n";
             break;
@@ -315,7 +315,7 @@ int main() {
         }
         cout << "Computer's turn:\n";
         do_best_move(rng);
-        if (check_board() == COMP_WIN) {
+        if (check_board() > 0) {
             print_board();
             cout << "You lose\n";
             break;
