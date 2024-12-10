@@ -287,10 +287,10 @@ int main() {
             cout << "Draw\n";
             break;
         }
-        if (is_unwinnable()) {
-            print_board();
-            cout << "Draw\n";
-            break;
-        }
+        // if (is_unwinnable()) {
+        //     print_board();
+        //     cout << "Draw\n";
+        //     break;
+        // }
     }
 }
