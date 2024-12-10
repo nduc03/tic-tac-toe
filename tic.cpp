@@ -5,7 +5,7 @@
 
 using namespace std;
 
-constexpr int SIZE = 3;
+constexpr int SIZE = 5;
 
 constexpr int COMP_WIN = 1;
 constexpr int COMP_LOSE = -1;
@@ -37,7 +37,6 @@ void print_board() {
 }
 
 int check_board() {
-    int WIN_LOSE_FACTOR = 10;
     int diag_sum = 0;
     int anti_diag_sum = 0;
     for (int i = 0; i < SIZE; i++) {
@@ -51,28 +50,28 @@ int check_board() {
             }
         }
         if (row_sum == -SIZE) {
-            return COMP_LOSE * WIN_LOSE_FACTOR;
+            return COMP_LOSE;
         } else if (row_sum == SIZE) {
-            return COMP_WIN * WIN_LOSE_FACTOR;
+            return COMP_WIN;
         }
         if (col_sum == -SIZE) {
-            return COMP_LOSE * WIN_LOSE_FACTOR;
+            return COMP_LOSE;
         } else if (col_sum == SIZE) {
-            return COMP_WIN * WIN_LOSE_FACTOR;
+            return COMP_WIN;
         }
         diag_sum += board[i][i];
     }
     if (diag_sum == -SIZE) {
-        return COMP_LOSE * WIN_LOSE_FACTOR;
+        return COMP_LOSE;
     }
     if (diag_sum == SIZE) {
-        return COMP_WIN * WIN_LOSE_FACTOR;
+        return COMP_WIN;
     }
     if (anti_diag_sum == -SIZE) {
-        return COMP_LOSE * WIN_LOSE_FACTOR;
+        return COMP_LOSE;
     }
     if (anti_diag_sum == SIZE) {
-        return COMP_WIN * WIN_LOSE_FACTOR;
+        return COMP_WIN;
     }
     return DRAW;
 }
@@ -178,7 +177,7 @@ int minimax_abPruning(int depth, int player, int alpha, int beta) {
     }
     int result = check_board();
     if (result != 0) {
-        return result * 10;
+        return result;
     }
     if (is_full()) {
         return DRAW;
@@ -288,7 +287,6 @@ int main() {
             cout << "Draw\n";
             break;
         }
-        // ! Bug: is_unwinnable() may not work as intended
         if (is_unwinnable()) {
             print_board();
             cout << "Draw\n";
