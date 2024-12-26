@@ -5,7 +5,7 @@
 
 using namespace std;
 
-constexpr int SIZE = 3;
+constexpr int SIZE = 7;
 
 constexpr int COMP_WIN = 1;
 constexpr int COMP_LOSE = -1;
@@ -14,7 +14,7 @@ constexpr int DRAW = 0;
 constexpr int PLAYER_COMP = 1;
 constexpr int PLAYER_HUMAN = -1;
 
-constexpr int MAX_DEPTH = 7;
+constexpr int MAX_DEPTH = 3;
 
 int board[SIZE][SIZE] = {0};
 
@@ -36,7 +36,45 @@ void print_board() {
     }
 }
 
+int checkBoardBigSize(int size) {
+    // Lambda function to check if 5 consecutive cells sum to target.
+    auto checkConsecutive = [&](int row, int col, int dRow, int dCol, int target) -> bool {
+        int sum = 0;
+        for (int i = 0; i < 5; ++i) {
+            int r = row + i * dRow;
+            int c = col + i * dCol;
+            if (r < 0 || r >= size || c < 0 || c >= size) return false;
+            sum += board[r][c];
+        }
+        return sum == target;
+    };
+
+    // Iterate through each cell to check all possible directions.
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            // Check rows, columns, diagonals, and anti-diagonals for COMP_WIN and COMP_LOSE.
+            if (checkConsecutive(i, j, 0, 1, 5) || // Horizontal
+                checkConsecutive(i, j, 1, 0, 5) || // Vertical
+                checkConsecutive(i, j, 1, 1, 5) || // Diagonal
+                checkConsecutive(i, j, 1, -1, 5))  // Anti-diagonal
+                return COMP_WIN;
+
+            if (checkConsecutive(i, j, 0, 1, -5) || // Horizontal
+                checkConsecutive(i, j, 1, 0, -5) || // Vertical
+                checkConsecutive(i, j, 1, 1, -5) || // Diagonal
+                checkConsecutive(i, j, 1, -1, -5))  // Anti-diagonal
+                return COMP_LOSE;
+        }
+    }
+
+    // If no winning or losing condition is met, return DRAW.
+    return DRAW;
+}
+
 int check_board() {
+    if (SIZE >= 6) {
+        return checkBoardBigSize(SIZE);
+    }
     int diag_sum = 0;
     int anti_diag_sum = 0;
     for (int i = 0; i < SIZE; i++) {
@@ -73,6 +111,7 @@ int check_board() {
     if (anti_diag_sum == SIZE) {
         return COMP_WIN;
     }
+
     return DRAW;
 }
 
